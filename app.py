@@ -125,5 +125,6 @@ def eliminar_venta():
         modificar_venta = f"delete from ventas where id= '{data['id']}'"
         respuesta2 = con.execute(modificar_venta)
     return jsonify({"Respuesta":"OK"})
+    
 if __name__ == "__main__":
     app.run()
