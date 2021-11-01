@@ -5,6 +5,7 @@ from api.models.models import Carrito, Usuario, Ventas
 import json
 import requests
 
+
 #migraciones base de datos
 
 
