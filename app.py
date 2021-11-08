@@ -126,4 +126,5 @@ def eliminar_venta():
         respuesta2 = con.execute(modificar_venta)
     return jsonify({"Respuesta":"OK"})
 
-app.run()
+if __name__ == "__main__":
+        app.run()
