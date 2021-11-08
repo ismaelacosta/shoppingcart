@@ -30,7 +30,7 @@ session = Session()
 
 @app.route('/',methods=['GET'])
 def hola():
-    return jsonify({'message':"Endpoint desde hola"})
+    return jsonify({'message':"Prueba de funcionamiento....... HOLA!"})
 
 
 #Metodo para añadir Es de Ejemplo para el proyecto
