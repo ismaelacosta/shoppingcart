@@ -28,7 +28,7 @@ app = Flask(__name__)
 
 session = Session()
 
-@app.route('/hola',methods=['GET'])
+@app.route('/',methods=['GET'])
 def hola():
     return jsonify({'message':"Endpoint desde hola"})
 
