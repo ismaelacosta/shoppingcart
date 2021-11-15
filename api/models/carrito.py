@@ -18,7 +18,7 @@ class AgregarCarrito(BaseModel):
                 "nombre_producto": "Leche",
                 "proveedor": "Zaragoza",
                 "cantidad_de_unidades": 1,
-                "precio_por_unidad":50,
+                "precio_por_unidad":50.0,
                 "tipo_producto":"Lacteos"
                 }
             }
