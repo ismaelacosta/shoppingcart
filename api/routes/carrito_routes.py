@@ -27,7 +27,6 @@ def agregar_carrito(data : Carrito):
             ejecutar_verificacion = con.execute(verificar_entrada_carrito)
             for i in ejecutar_verificacion:
                 validacion = i[0]
-            print(validacion)
             if validacion != None:
                 return{"respuesta" : "El cliente ya tiene agregado el producto en el carrito" }
             else:
