@@ -18,10 +18,10 @@ def agregar_carrito(data : Carrito):
     #print("Aqui sirve para poner la informacion en consola")
     #print(data)
     #print(type(data))
-
+    
     #Ejecutar instrucciones en nuestra base de datos
     with engine.connect() as con:
-        insertar_carrito = f"insert into carrito (id_producto,id_cliente,nombre_producto,proveedor,cantidad_de_unidades,precio_por_unidad,tipo_producto,fecha_registro) values({data['id_producto']},{data['id_cliente']},'{data['nombre_producto']}','{data['proveedor']}',{data['cantidad_de_unidades']},{data['precio_por_unidad']},'{data['tipo_producto']}',NOW())"
+        insertar_carrito = f"insert into carrito (id_producto,id_cliente,nombre_producto,proveedor,cantidad_de_unidades,precio_por_unidad,tipo_producto,fecha_registro) values({data.id_producto},{data.id_cliente},'{data.nombre_producto}','{data.proveedor}',{data.cantidad_de_unidades},{data.precio_por_unidad},'{data.tipo_producto}',NOW())"
         try:
             ejecutar = con.execute(insertar_carrito)
         except:
