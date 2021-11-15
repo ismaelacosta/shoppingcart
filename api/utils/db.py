@@ -15,9 +15,11 @@ POSTGRES = {
 connection_db='postgresql://%(user)s:\
 %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 
-Base = declarative_base()
+
 
 
 engine = create_engine(connection_db)
 
 Session = sessionmaker(bind=engine) # Guarda las transacciones a la base de datos
+
+Base = declarative_base()

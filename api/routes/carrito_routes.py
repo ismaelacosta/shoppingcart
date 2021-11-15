@@ -5,7 +5,7 @@ from pydantic.typing import NONE_TYPES
 import requests
 from sqlalchemy.sql.elements import Null
 
-from api.models.carrito import Carrito
+from api.models.carrito import AgregarCarrito
 from api.utils.db import engine
 
 router = APIRouter()
@@ -16,7 +16,7 @@ def hola():
 
  #Metodo para añadir productos al carrito de los clientes
 @router.post("/add_carrito")
-def agregar_carrito(data : Carrito):
+def agregar_carrito(data : AgregarCarrito):
     #Ejecutar instrucciones en nuestra base de datos
     with engine.connect() as con:
         verificar_entrada_carrito = f"select id_cliente from carrito where id_cliente={data.id_cliente} and id_producto ={data.id_producto}"
