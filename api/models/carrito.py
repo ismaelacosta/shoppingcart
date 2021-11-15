@@ -7,7 +7,7 @@ class AgregarCarrito(BaseModel):
     nombre_producto : str
     proveedor : str
     cantidad_de_unidades : int
-    precio_por_unidad: str
+    precio_por_unidad: float
     tipo_producto : str
     #Definir los tipos de datos necesarios
     class Config:
