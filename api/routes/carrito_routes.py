@@ -1,6 +1,9 @@
 from fastapi import APIRouter
 import json
+from pydantic.errors import NotNoneError
+from pydantic.typing import NONE_TYPES
 import requests
+from sqlalchemy.sql.elements import Null
 
 from api.models.carrito import Carrito
 from api.utils.db import engine
@@ -11,21 +14,27 @@ router = APIRouter()
 def hola():
     return {'mensaje':"Prueba de funcionamiento....... Hola"}
 
- #Metodo para añadir productos al carrito de las personas
+ #Metodo para añadir productos al carrito de los clientes
 @router.post("/add_carrito")
 def agregar_carrito(data : Carrito):
-    #Recibir los datos del POST y forzar a tenerlo en formato json 
-    #print("Aqui sirve para poner la informacion en consola")
-    #print(data)
-    #print(type(data))
-    
     #Ejecutar instrucciones en nuestra base de datos
     with engine.connect() as con:
+        verificar_entrada_carrito = f"select id_cliente from carrito where id_cliente={data.id_cliente} and id_producto ={data.id_producto}"
         insertar_carrito = f"insert into carrito (id_producto,id_cliente,nombre_producto,proveedor,cantidad_de_unidades,precio_por_unidad,tipo_producto,fecha_registro) values({data.id_producto},{data.id_cliente},'{data.nombre_producto}','{data.proveedor}',{data.cantidad_de_unidades},{data.precio_por_unidad},'{data.tipo_producto}',NOW())"
+        validacion = None
         try:
-            ejecutar = con.execute(insertar_carrito)
+            # Valida si el producto ya fue agregado antes en el carrito
+            ejecutar_verificacion = con.execute(verificar_entrada_carrito)
+            for i in ejecutar_verificacion:
+                validacion = i[0]
+            print(validacion)
+            if validacion != None:
+                return{"respuesta" : "El cliente ya tiene agregado el producto en el carrito" }
+            else:
+                #Ejecuta la instruccion para agregarlo en el carrito si no lo estaba previamente
+                ejecutar = con.execute(insertar_carrito)
         except:
-            return {"respuesta":"producto del usuario en el carrito ya creado en la base de datos"}
+            return {"respuesta":"Error interno"}
     return {"respuesta":"Producto agregado correctamente en el carrito"}
 
 #Eliminar un producto de un cliente en especifico
