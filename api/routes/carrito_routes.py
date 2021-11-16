@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends
 import json
+from typing import List 
 from pydantic.errors import NotNoneError
 from pydantic.typing import NONE_TYPES
 import requests
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, session
 from sqlalchemy.sql.elements import Null
 
 from api.models.carrito import AgregarCarrito, SalidaCarrito
@@ -20,7 +21,7 @@ def hola():
     return {'mensaje':"Prueba de funcionamiento....... Hola"}
 
  #Metodo para añadir productos al carrito de los clientes
-@router.post("/add_carrito")
+@router.post("/agregar_carrito")
 def agregar_carrito(data : AgregarCarrito):
     #Ejecutar instrucciones en nuestra base de datos
     with engine.connect() as con:
@@ -43,28 +44,50 @@ def agregar_carrito(data : AgregarCarrito):
 
 #Eliminar un producto de un cliente en especifico
 @router.delete("/eliminar/{idcliente}/{idproducto}") 
-def eliminar_carrito(idcliente,idproducto):
+def eliminar_producto_carrito(idcliente: int ,idproducto : int):
     with engine.connect() as con:
         consulta_eliminar = f"delete from carrito where id_cliente= {idcliente} and id_producto={idproducto}"
         ejecutar_eliminacion = con.execute(consulta_eliminar)
     return {"Respuesta":"OK"}
 
-#Metodo de consulta de carrito de un usuario en especifico
-@router.get("/obtener_carrito_cliente/{idcliente}", response_model=SalidaCarrito)
-def obtener_carrito_cliente(idcliente, db: Session = Depends(get_db)):
+#Eliminar todo el carrito de un cliente
+@router.delete("/eliminar/{idcliente}") 
+def eliminar_carrito_completo(idcliente : int , db : Session = Depends(get_db)):
     with engine.connect() as con:
-        obtener_el_carrito_cliente = f"select * from carrito where id_cliente={idcliente}"
-        respuesta_carrito = con.execute(obtener_el_carrito_cliente)
-        orm = db.query(modeloCarrrito).filter(modeloCarrrito.id_cliente == idcliente).all()
-        #diccionario = list()
-        #for i in respuesta_carrito:
-         #   diccionario.append({"nombre_producto":i[3], "precio_por_unidad":i[6],"cantidad_de_unidades":i[5]})
-    return {"Carrito":orm}
+        #consulta_eliminar = f"delete from carrito where id_cliente= {idcliente} and id_producto={idproducto}"
+        try:
+            orm = db.query(modeloCarrrito).filter(modeloCarrrito.id_cliente == idcliente).delete()
+            db.commit()
+
+        except:
+            return {"Respuesta": "Error al eliminar el carrito del cliente"}
+        #ejecutar_eliminacion = con.execute(consulta_eliminar)
+    return {"Respuesta":"OK"}
+
+#Metodo de consulta de carrito de un usuario en especifico
+@router.get("/obtener_carrito_cliente/{idcliente}")
+def obtener_carrito_cliente(idcliente: int, db: Session = Depends(get_db)):
+    orm = db.query(modeloCarrrito).filter(modeloCarrrito.id_cliente == idcliente).all()
+    diccionario = list()
+    for i in orm:
+        diccionario.append({"id_producto":i.id_producto,"nombre_producto":i.nombre_producto,"proveedor":i.proveedor, "precio_por_unidad":i.precio_por_unidad,"cantidad_de_unidades":i.cantidad_de_unidades})
+    
+    return {"Carrito":diccionario}
+
+
+#Metodo la fecha en que fueron registrados los productos en el carrito de todos
+@router.get("/obtener_registro_carrito_clientes")
+def obtener_registro_carritos_clientes(db: Session = Depends(get_db)):
+    orm = db.query(modeloCarrrito).all()
+    diccionario = list()
+    for i in orm:
+        diccionario.append({"id_cliente":i.id_cliente,"id_producto":i.id_producto,"fecha_registro":i.fecha_registro})
+
+    return diccionario
 
 #Metodo para modificar aumentando la cantidad del producto de un cliente en especifico
 @router.put("/modificar_carrito_add/{idcliente}/{idproducto}")
-def cambiar_carrito_agregar(idcliente,idproducto):
-   
+def cambiar_carrito_agregar(idcliente : int ,idproducto : int):
     with engine.connect() as con:
         #consultar_cantidad = f"select cantidad_de_unidades from"
         modificar_venta = f"update carrito set cantidad_de_unidades=cantidad_de_unidades + 1 where id_cliente= {idcliente} and id_producto={idproducto}"
@@ -75,7 +98,7 @@ def cambiar_carrito_agregar(idcliente,idproducto):
 #Metodo para modificar disminuyendo la cantidad del producto de un cliente en especifico
 #En caso de que el producto llegue a cero este sera eliminado en su lugar
 @router.put("/modificar_carrito_borrar/{idcliente}/{idproducto}")
-def cambiar_carrito_borrar(idcliente,idproducto):
+def cambiar_carrito_borrar(idcliente : int, idproducto: int):
     #data = json.loads(request.data)
     with engine.connect() as con:
         consultar_cantidad = f"select cantidad_de_unidades from carrito where id_cliente= {idcliente} and id_producto={idproducto}"

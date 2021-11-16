@@ -11,7 +11,7 @@ class AgregarCarrito(BaseModel):
     tipo_producto : str
     class Config:
         schema_extra = {
-            "examplo": {
+            "example": {
                 "id_cliente": 1,
                 "id_producto": 1,
                 "nombre_producto": "Leche",
