@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from fastapi import Query
 
 class AgregarCarrito(BaseModel):
     id_cliente : int 
@@ -8,7 +9,8 @@ class AgregarCarrito(BaseModel):
     proveedor : str
     cantidad_de_unidades : int
     precio_por_unidad: float
-    tipo_producto : str
+    tipo_producto : Optional[str] = Query("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftumundoeconomia.com%2Fwp-content%2Fuploads%2F2020%2F07%2Fnecesidades-del-mercado6.png&f=1&nofb=1", max_length=200)
+    url_imagen : str
     class Config:
         schema_extra = {
             "example": {
@@ -18,7 +20,8 @@ class AgregarCarrito(BaseModel):
                 "proveedor": "Zaragoza",
                 "cantidad_de_unidades": 1,
                 "precio_por_unidad":50.0,
-                "tipo_producto":"Lacteos"
+                "tipo_producto":"Lacteos",
+                "url_imagen":"http.imagen.1.png"
                 }
             }
 

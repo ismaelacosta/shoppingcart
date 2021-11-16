@@ -16,6 +16,7 @@ class Carrito(Base):
     cantidad_de_unidades = Column(Integer)
     precio_por_unidad = Column(Numeric)
     tipo_producto = Column(String(40))
+    url_imagen = Column(String(200))
     fecha_registro = Column(TIMESTAMP)
     
 models.Base.metadata.create_all(engine)#Crea la table en base de datos 

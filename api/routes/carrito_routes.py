@@ -26,7 +26,7 @@ def agregar_carrito(data : AgregarCarrito):
     #Ejecutar instrucciones en nuestra base de datos
     with engine.connect() as con:
         verificar_entrada_carrito = f"select id_cliente from carrito where id_cliente={data.id_cliente} and id_producto ={data.id_producto}"
-        insertar_carrito = f"insert into carrito (id_producto,id_cliente,nombre_producto,proveedor,cantidad_de_unidades,precio_por_unidad,tipo_producto,fecha_registro) values({data.id_producto},{data.id_cliente},'{data.nombre_producto}','{data.proveedor}',{data.cantidad_de_unidades},{data.precio_por_unidad},'{data.tipo_producto}',NOW())"
+        insertar_carrito = f"insert into carrito (id_producto,id_cliente,nombre_producto,proveedor,cantidad_de_unidades,precio_por_unidad,tipo_producto,url_imagen,fecha_registro) values({data.id_producto},{data.id_cliente},'{data.nombre_producto}','{data.proveedor}',{data.cantidad_de_unidades},{data.precio_por_unidad},'{data.tipo_producto}','{data.url_imagen}',NOW())"
         validacion = None
         try:
             # Valida si el producto ya fue agregado antes en el carrito
@@ -70,7 +70,7 @@ def obtener_carrito_cliente(idcliente: int, db: Session = Depends(get_db)):
     orm = db.query(modeloCarrrito).filter(modeloCarrrito.id_cliente == idcliente).all()
     diccionario = list()
     for i in orm:
-        diccionario.append({"id_producto":i.id_producto,"nombre_producto":i.nombre_producto,"proveedor":i.proveedor, "precio_por_unidad":i.precio_por_unidad,"cantidad_de_unidades":i.cantidad_de_unidades})
+        diccionario.append({"id_producto":i.id_producto,"nombre_producto":i.nombre_producto,"proveedor":i.proveedor, "precio_por_unidad":i.precio_por_unidad,"cantidad_de_unidades":i.cantidad_de_unidades,"url_imagen":i.url_imagen})
     
     return {"Carrito":diccionario}
 
