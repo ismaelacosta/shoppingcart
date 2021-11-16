@@ -1,8 +1,7 @@
-from sqlalchemy import create_engine, engine
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base #Permite realizar el mapeo a partir del modelo
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import Session
-from sqlalchemy.sql.selectable import Select #todo se hace por sesiones, tenemos que guardar las transacciones para guardar en la base de datos
+
 
 POSTGRES = {
     'user': 'lpvialnlgfvxbe',
@@ -15,11 +14,15 @@ POSTGRES = {
 connection_db='postgresql://%(user)s:\
 %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 
-
-
-
 engine = create_engine(connection_db)
 
-Session = sessionmaker(bind=engine) # Guarda las transacciones a la base de datos
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine) # Guarda las transacciones a la base de datos
 
 Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    except:
+        db.close()

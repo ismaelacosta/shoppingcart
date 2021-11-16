@@ -1,12 +1,17 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 import json
 from pydantic.errors import NotNoneError
 from pydantic.typing import NONE_TYPES
 import requests
+from sqlalchemy.orm import Session
 from sqlalchemy.sql.elements import Null
 
-from api.models.carrito import AgregarCarrito
-from api.utils.db import engine
+from api.models.carrito import AgregarCarrito, SalidaCarrito
+
+from api.utils.db import engine, get_db
+
+#MOdelos para la base de datos
+from api.models.models import Carrito as modeloCarrrito
 
 router = APIRouter()
 
@@ -45,16 +50,16 @@ def eliminar_carrito(idcliente,idproducto):
     return {"Respuesta":"OK"}
 
 #Metodo de consulta de carrito de un usuario en especifico
-@router.get("/obtener_carrito_cliente/{idcliente}")
-def obtener_carrito_cliente(idcliente):
+@router.get("/obtener_carrito_cliente/{idcliente}", response_model=SalidaCarrito)
+def obtener_carrito_cliente(idcliente, db: Session = Depends(get_db)):
     with engine.connect() as con:
         obtener_el_carrito_cliente = f"select * from carrito where id_cliente={idcliente}"
         respuesta_carrito = con.execute(obtener_el_carrito_cliente)
-        diccionario = list()
-
-        for i in respuesta_carrito:
-            diccionario.append({"nombre_producto":i[3], "precio_por_unidad":i[6],"cantidad_de_unidades":i[5]})
-    return {"Carrito":diccionario}
+        orm = db.query(modeloCarrrito).filter(modeloCarrrito.id_cliente == idcliente).all()
+        #diccionario = list()
+        #for i in respuesta_carrito:
+         #   diccionario.append({"nombre_producto":i[3], "precio_por_unidad":i[6],"cantidad_de_unidades":i[5]})
+    return {"Carrito":orm}
 
 #Metodo para modificar aumentando la cantidad del producto de un cliente en especifico
 @router.put("/modificar_carrito_add/{idcliente}/{idproducto}")

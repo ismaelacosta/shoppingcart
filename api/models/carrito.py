@@ -9,10 +9,9 @@ class AgregarCarrito(BaseModel):
     cantidad_de_unidades : int
     precio_por_unidad: float
     tipo_producto : str
-    #Definir los tipos de datos necesarios
     class Config:
         schema_extra = {
-            "Ejemplo": {
+            "examplo": {
                 "id_cliente": 1,
                 "id_producto": 1,
                 "nombre_producto": "Leche",
@@ -23,3 +22,8 @@ class AgregarCarrito(BaseModel):
                 }
             }
 
+class SalidaCarrito(BaseModel):
+    nombre_producto : str
+    cantidad_de_unidades : int
+    precio_por_unidad: float
+    tipo_producto : str

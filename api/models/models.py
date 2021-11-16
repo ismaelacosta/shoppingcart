@@ -2,6 +2,7 @@
 from sqlalchemy import Column,String,Integer
 from sqlalchemy.sql.sqltypes import TIMESTAMP, Float, Numeric
 from api.utils.db import Base, engine
+from api.models import models
 from sqlalchemy.schema import ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -17,4 +18,4 @@ class Carrito(Base):
     tipo_producto = Column(String(40))
     fecha_registro = Column(TIMESTAMP)
     
-Base.metadata.create_all(engine)#Crea la table en base de datos 
+models.Base.metadata.create_all(engine)#Crea la table en base de datos 
